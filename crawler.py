@@ -23,8 +23,8 @@ def findAllLinks(url, links, regex, myFile):
             path = link['href'].replace("..", "")
             fullURL = baseURL + path
 
-            # Removes anything in () taht's part of the song title
-            song_title = re.sub(r' \(([A-Za-z0-9-]+)\)', '', link.text)
+            # Removes anything in () that's part of the song title
+            song_title = re.sub(r' \(([^()]+)\)', '', link.text)
 
             # Verifies that the link matches the given regular expression
             # and verifies that the link does not already exists in the set
@@ -42,7 +42,7 @@ def findAllLinks(url, links, regex, myFile):
                     myFile.write(fullURL + "::" + str(text) + "\n")
 
                 # Time delay to prevent getting blacklisted from the lyrics website
-                time.sleep(30)
+                time.sleep(20)
                 
             
 # Extracts text from each web page
@@ -64,7 +64,7 @@ def extractText(url, regex):
         text = main.find('div').text
 
     # Removes pattern - e.g. [Singer:]
-    text = re.sub(r'\[([A-Za-z0-9\s.:?-]+)\]', '', text)
+    text = re.sub(r'\[([A-Za-z0-9\s.:?()"\';:-]+)\]', '', text)
     # Removes all punctuation
     text = ''.join(c for c in text if c not in string.punctuation)
     # Removes numbers
@@ -79,14 +79,15 @@ def extractText(url, regex):
 
 if __name__ == '__main__':
 
-    urls = ["http://www.azlyrics.com/d/drake.html"]
+    if len(sys.argv) < 2:
+        print ("No URL to crawl")
+    else:
+        url = str(sys.argv[1])
 
-    parsedURL = urlparse(urls[0])
-    # Gets root of URL
-    baseURL = '{uri.scheme}://{uri.netloc}'.format(uri=parsedURL)
+        parsedURL = urlparse(url)
+        # Gets root of URL
+        baseURL = '{uri.scheme}://{uri.netloc}'.format(uri=parsedURL)
 
-    # Iterate through each URL to retrieve all links
-    for url in urls:
         links = []
 
         pathURL = '{uri.path}'.format(uri=parsedURL)
@@ -106,3 +107,5 @@ if __name__ == '__main__':
             findAllLinks(url, links, regex, my_file)
 
             my_file.close()
+
+    sys.exit()
