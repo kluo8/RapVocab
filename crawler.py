@@ -39,10 +39,10 @@ def findAllLinks(url, links, regex, myFile):
                 if text is not None:
                     links.append(fullURL)
                     all_song_titles.append(song_title)
-                    myFile.write(fullURL + "::" + str(text) + "\n")
+                    myFile.write(str(text) + "\n")
 
                 # Time delay to prevent getting blacklisted from the lyrics website
-                time.sleep(20)
+                time.sleep(10)
                 
             
 # Extracts text from each web page
