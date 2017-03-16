@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append('../')
+from libs import iohelper
 import re
 import os
 from pyspark import SparkContext, SparkConf
@@ -28,7 +31,8 @@ def wordCountByArtist(artist, filePath):
     counts = SPARK_CONTEXT.textFile(filePath).\
         flatMap(lambda x: x.split()).\
         map(lambda x: (x,1)).\
-        reduceByKey(lambda x,y: x+y)
+        reduceByKey(lambda x,y: x+y).\
+        sortBy(lambda (word, count): count, False)
         
     print(counts.count())
     counts.saveAsTextFile(outputFile)
@@ -39,41 +43,17 @@ def wordCountByArtist(artist, filePath):
     
 # Process data from a lyrics directory
 def processData(path):
-    files = listDdirectoryContent(path, True)
+    files = iohelper.listDirectoryContent(path, True)
     for f in files:
         artist = re.sub(r'\.txt', '', f)
         wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, '/', f]))
-    
-
-# Extract artist lyrics file names from a directory path
-# path: path for a directory
-# file: whether we are listing files 
-def listDdirectoryContent(path, isFile):
-    if(os.path.exists(path)):
-        dirContent = os.listdir(path)
-        files = []
-        for i in dirContent:
-            iPath = ''.join([path, '/', i])
-            
-            if i != '.' and i!= '..' and \
-                    ( (os.path.isfile(iPath) and isFile) or \
-                      (os.path.isdir(iPath) and not isFile) ):
-                files.append(i)
-            
-        return files
-    else:
-        raise Exception('Directory not found')
-
-
 
 
 
 if __name__ == '__main__':
     
-    dataDirs = listDdirectoryContent(DATA_PATH, False)
-    for d in dataDirs :
-        dirPath = ''.join([DATA_PATH, '/', d])
-        processData(dirPath)
+    dirPath = ''.join([DATA_PATH, '/azlyrics'])
+    processData(dirPath)
         
     
     
