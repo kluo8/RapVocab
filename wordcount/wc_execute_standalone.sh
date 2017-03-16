@@ -20,4 +20,4 @@ chmod 775 wordcount.py
 ./wordcount.py
 
 echo "Diversity (Regular) Results:"
-cat diversity_regular.txt
+cat output/diversity_regular.txt
