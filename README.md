@@ -19,4 +19,11 @@ Run `wc_execute_standalone.sh` if on linux or:
 2. Run `./wordcount.py`
 3. Word count for each artist is in the `output` dir and  the file `diversity_*.txt` in the `wordcount` package contains the nb of diff lyrics for each artist
 
+## How to Filter
+Format: `python filter.py [filter]`
+Usage:
+* `python filter.py L` (L = lemmatization)
+* `python filter.py P` (P = profanity)
+
+
 
