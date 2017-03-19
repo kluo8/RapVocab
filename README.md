@@ -24,6 +24,8 @@ Format: `python filter.py [filter]`
 
 Usage:
 * `python filter.py L` (L = lemmatization)
+  * Requires nltk's wordnet package to be installed. 
+  * In the python environment, run `nltk.download()`. The NLTK downloader will pop up, under the Packages tab select the wordnet package for installation.
 * `python filter.py P` (P = profanity)
 
 
