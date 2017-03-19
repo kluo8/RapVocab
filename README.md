@@ -21,6 +21,7 @@ Run `wc_execute_standalone.sh` if on linux or:
 
 ## How to Filter
 Format: `python filter.py [filter]`
+
 Usage:
 * `python filter.py L` (L = lemmatization)
 * `python filter.py P` (P = profanity)

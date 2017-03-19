@@ -3,6 +3,7 @@ import sys
 import string
 import os
 import re
+from nltk.stem import WordNetLemmatizer
 
 def main(filter):
     custom_badwords = load_badwords()
@@ -26,7 +27,8 @@ def main(filter):
         tokens = nltk.word_tokenize(content)
 
         if filter == "L":
-            tokens = filter_lemma(tokens)
+            # Lemmatizes only the nouns
+            tokens = [WordNetLemmatizer().lemmatize(x) for x in tokens]
             filter_folder = "lemmatization"
         elif filter == "P":
             # Removes profanity
@@ -45,7 +47,6 @@ def main(filter):
 
         lyric_file.close()
         output_file.close()
-
 
 def load_badwords():
     with open("custom_badwords.txt") as f:
