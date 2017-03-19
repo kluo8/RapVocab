@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import os
+import sys
+sys.path.append('../')
 from pyspark.ml.clustering import KMeans as dfKMeans
 from pyspark.sql import SparkSession
-from plotcluster import plot2DSparkCluster
 from pyspark.mllib.clustering import KMeansModel, KMeans
 from pyspark.mllib.linalg import Vectors
+from clustering.plotcluster import plot2DSparkCluster
 
 '''
 Created on Mar 18, 2017
