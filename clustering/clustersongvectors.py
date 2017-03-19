@@ -18,11 +18,12 @@ HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
 SONG_VECTORS_FILE = WORKING_DIR + "/../wordcount/output/song_vectors.txt"
-CENTERS = [Vectors.parse("[1.0, 1.0]"), 
-            Vectors.parse("[2500.0, 0.0]"),
-            Vectors.parse("[0.0, 700.0]"),
-            Vectors.parse("[2500.0, 700.0]")]
 
+CENTERS = [[1.0, 1.0],
+           [2500.0, 1.0],
+           [0.0, 700.0],
+           [2500.0, 700.0]]
+CENTER_VECTORS = map(lambda center: Vectors.dense(center), CENTERS)
 
 
 
@@ -38,13 +39,13 @@ def kmeansEstimator(dataset, nClusters):
     print("Apply model to data and show result")
     result = model.transform(dataset)
     result.show()
-    plot2DSparkCluster(result.collect(), "Size", "Diversity", "Song Analysis by Size and Diversity")
+    plot2DSparkCluster(result.collect(), centers, "Size", "Diversity", "Song Analysis by Size and Diversity")
     
 
 # Kmeans with initial centers defined
 # DataFrame dataset 
 def KmeansInitialClusters(dataset):
-    model = KMeansModel(CENTERS)
+    model = KMeansModel(CENTER_VECTORS)
     vectorsRdd = dataset.rdd.map(lambda data: Vectors.parse(Vectors.stringify(data['features'])))
     trainedModel = KMeans.train(vectorsRdd, 4, initialModel=model)
     result=[]
@@ -53,10 +54,9 @@ def KmeansInitialClusters(dataset):
         entry["features"] = d["features"]
         entry["prediction"] = trainedModel.predict(Vectors.parse(Vectors.stringify(d['features'])))
         entry["label"] = d['label']
-        print(entry)
         result.append(entry)
         
-    plot2DSparkCluster(result, "Size", "Diversity", "Song Analysis by Size and Diversity")
+    plot2DSparkCluster(result, CENTERS, "Size", "Diversity", "Song Analysis by Size and Diversity")
     
 
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     print("Read dataset")
     dataset = spark.read.format("libsvm").load(HDFS_LOCAL_ACCESS + SONG_VECTORS_FILE)
     
-#     kmeansEstimator(dataset, 4)
+    kmeansEstimator(dataset, 4)
     KmeansInitialClusters(dataset)
     
     
