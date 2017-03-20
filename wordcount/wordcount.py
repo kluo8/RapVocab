@@ -24,12 +24,6 @@ DIVERSITY_REGULAR_FILE = OUTPUT + 'diversity_regular.txt'
 SONG_VERCTOR = OUTPUT + 'song_vectors.txt'
 ARTIST_HASH_TABLE = OUTPUT + 'artist_hash.txt'
 
-# clear diversity and vector files
-f = open(DIVERSITY_REGULAR_FILE, 'w')
-f.close()
-f = open(SONG_VERCTOR, 'w')
-f.close()
-
 
 # Count occurences of each different word an artist uses
 def wordCountByArtist(artist, filePath, version='regular'):
@@ -37,7 +31,7 @@ def wordCountByArtist(artist, filePath, version='regular'):
     outputFile = ''.join([HDFS_LOCAL_ACCESS, WORD_COUNT_OUTPUT, version, '_', artist])
 
     counts = SPARK_CONTEXT.textFile(HDFS_LOCAL_ACCESS + filePath).\
-        flatMap(lambda x: x.split()).\
+        flatMap(lambda x: x.encode('utf-8').split()).\
         map(lambda x: (x, 1)).\
         reduceByKey(lambda x, y: x + y).\
         sortBy(lambda (word, count): count, False)
@@ -50,7 +44,7 @@ def wordCountByArtist(artist, filePath, version='regular'):
 # Process data from a lyrics directory
 def processData(path):
 
-
+    ID = 1
     artistHashTable = {}
 
 
@@ -59,10 +53,11 @@ def processData(path):
         artist = re.sub(r'\.txt', '', f)
 
         if artist not in artistHashTable:
-            artistHashTable[artist] = abs(hash(artist))
+            artistHashTable[artist] = ID
+            ID+=1
 
         wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
-        songProcessing(artist, ''.join([DATA_AZLYRICS_PATH, f]))
+        songProcessing(artist, artistHashTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
 
     f = open(ARTIST_HASH_TABLE, 'w')
     for key, value in artistHashTable.iteritems():
@@ -72,29 +67,35 @@ def processData(path):
 
 
 # Analyze songs individually
-def songProcessing(artist, filePath, version='regular'):
+def songProcessing(artist, artistId, filePath, version='regular'):
 
     lines = SPARK_CONTEXT.textFile(HDFS_LOCAL_ACCESS + filePath).\
-        flatMap(lambda x: x.split('\n'))
+        flatMap(lambda x: x.encode('utf-8').split('\n'))
     print("Nb songs for " + artist + ": ", lines.count())
-    lines.foreach(lambda x: buildSongVectorSVM(x, artist))
+    lines.foreach(lambda x: buildSongVectorSVM(x, artist, artistId))
 
 
 # Build song vector where dimensions are the following: nb of words, nb unique tokens, profane (eventually
 # use libSVM format: <label> <index1>:<value1> <index2>:<value2>
 # use song length and diversity
-def buildSongVectorSVM(song, artist):
+def buildSongVectorSVM(song, artist, artistId):
 
-    song = str(song).lower()
+    song = song.decode('utf-8').lower()
     total_tokens = nltk.word_tokenize(song)
     uniqueToken = set(total_tokens)
-    entry = ''.join([str(abs(hash(artist))), ' 1:', str(len(total_tokens)), ' 2:' , str(len(uniqueToken)), '\n'])
+    entry = ''.join([str(artistId), ' 1:', str(len(total_tokens)), ' 2:' , str(len(uniqueToken)), '\n'])
 
     f = open(SONG_VERCTOR, 'a')
     f.write(entry)
     f.close()
 
 if __name__ == '__main__':
+
+        # clear diversity and vector files
+    f = open(DIVERSITY_REGULAR_FILE, 'w')
+    f.close()
+    f = open(SONG_VERCTOR, 'w')
+    f.close()
 
     processData(DATA_AZLYRICS_PATH)
 

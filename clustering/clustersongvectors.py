@@ -20,15 +20,31 @@ HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
 SONG_VECTORS_FILE = WORKING_DIR + "/../wordcount/output/song_vectors.txt"
+ARTIST_HASH_FILE = WORKING_DIR + "/../wordcount/output/artist_hash.txt"
 
 CENTERS = [[1.0, 1.0],
            [2500.0, 1.0],
            [0.0, 700.0],
            [2500.0, 700.0]]
+
 CENTER_VECTORS = map(lambda center: Vectors.dense(center), CENTERS)
 
+ARTIST_HASH = {}
 
+def extractArtistHash():
+    for line in open(ARTIST_HASH_FILE):
+        line = line.rstrip('\n').split()
+        ARTIST_HASH[int(line[1])] = line[0]
+        print(int(line[1]))
 
+'''
+Perform kmeans clustering with an prior estimation of the centroids
+
+:param dataset:
+    Dataframe object
+:param nClusters:
+    nb of clusters desired
+'''
 def kmeansEstimator(dataset, nClusters):
     print("Fit kmeans model to dataset")
     kmeans = dfKMeans(k=nClusters)
@@ -44,9 +60,12 @@ def kmeansEstimator(dataset, nClusters):
     plot2DSparkCluster(result.collect(), centers, "Size", "Diversity", "Song Analysis by Size and Diversity")
     
 
-# Kmeans with initial centers defined
-# DataFrame dataset 
-def KmeansInitialClusters(dataset):
+''''
+Perform Kmeans Clustering with centroids predefined
+:param dataset:
+    Dataframe object
+'''
+def kmeansInitialClusters(dataset):
     model = KMeansModel(CENTER_VECTORS)
     vectorsRdd = dataset.rdd.map(lambda data: Vectors.parse(Vectors.stringify(data['features'])))
     trainedModel = KMeans.train(vectorsRdd, 4, initialModel=model)
@@ -59,10 +78,38 @@ def KmeansInitialClusters(dataset):
         result.append(entry)
         
     plot2DSparkCluster(result, CENTERS, "Size", "Diversity", "Song Analysis by Size and Diversity")
+    centroidArtistSongCount(result, CENTERS)
+    
+'''
+Count the number of songs each artist has for each cluster
+
+:param result:
+    collection with following entry format: 
+    {label=<artist hash>, features=<song vector>, prediction=<cluster index>}
+
+'''
+def centroidArtistSongCount(result, centroids):
+    artists={}
+    
+    for entry in result:
+        print(int(entry["label"]))
+        artist = ARTIST_HASH[int(entry["label"])]
+        centroid = str(entry["prediction"])
+        if artist not in artists:
+            artists[artist] = {}
+            for i in range(0, len(centroids)):
+                artists[artist][str(i)] = 0
+        
+        artists[artist][centroid]+= 1
+    
+    for artist, value in artists.items():
+        for key, value in value.items():
+            print(str(artist) + " - " + str(key) + ": " + str(value))
     
 
-
 if __name__ == '__main__':
+    
+    extractArtistHash()
     
     print("Initialize Spark session")
     spark = SparkSession \
@@ -74,7 +121,7 @@ if __name__ == '__main__':
     dataset = spark.read.format("libsvm").load(HDFS_LOCAL_ACCESS + SONG_VECTORS_FILE)
     
     kmeansEstimator(dataset, 4)
-    KmeansInitialClusters(dataset)
+    kmeansInitialClusters(dataset)
     
     
     spark.stop()
