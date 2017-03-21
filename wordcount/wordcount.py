@@ -22,7 +22,7 @@ WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
 DIVERSITY_REGULAR_FILE = OUTPUT + 'diversity_regular.txt'
 SONG_VERCTOR = OUTPUT + 'song_vectors.txt'
-ARTIST_HASH_TABLE = OUTPUT + 'artist_hash.txt'
+ARTIST_ID_TABLE = OUTPUT + 'artist_id.txt'
 
 
 # Count occurences of each different word an artist uses
@@ -45,22 +45,22 @@ def wordCountByArtist(artist, filePath, version='regular'):
 def processData(path):
 
     ID = 1
-    artistHashTable = {}
+    artistIdTable = {}
 
 
     files = iohelper.listDirectoryContent(path, True)
     for f in files:
         artist = re.sub(r'\.txt', '', f)
 
-        if artist not in artistHashTable:
-            artistHashTable[artist] = ID
+        if artist not in artistIdTable:
+            artistIdTable[artist] = ID
             ID+=1
 
         wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
-        songProcessing(artist, artistHashTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
+        songProcessing(artist, artistIdTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
 
-    f = open(ARTIST_HASH_TABLE, 'w')
-    for key, value in artistHashTable.iteritems():
+    f = open(ARTIST_ID_TABLE, 'w')
+    for key, value in artistIdTable.iteritems():
         f.write(''.join([str(key), " ", str(value), '\n']))
     f.close()
 

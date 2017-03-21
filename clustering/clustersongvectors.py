@@ -20,7 +20,7 @@ HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
 SONG_VECTORS_FILE = WORKING_DIR + "/../wordcount/output/song_vectors.txt"
-ARTIST_HASH_FILE = WORKING_DIR + "/../wordcount/output/artist_hash.txt"
+ARTIST_ID_FILE = WORKING_DIR + "/../wordcount/output/artist_id.txt"
 
 CENTERS = [[1.0, 1.0],
            [2500.0, 1.0],
@@ -29,12 +29,12 @@ CENTERS = [[1.0, 1.0],
 
 CENTER_VECTORS = map(lambda center: Vectors.dense(center), CENTERS)
 
-ARTIST_HASH = {}
+ARTIST_ID = {}
 
-def extractArtistHash():
-    for line in open(ARTIST_HASH_FILE):
+def extractArtistId():
+    for line in open(ARTIST_ID_FILE):
         line = line.rstrip('\n').split()
-        ARTIST_HASH[int(line[1])] = line[0]
+        ARTIST_ID[int(line[1])] = line[0]
         print(int(line[1]))
 
 '''
@@ -85,7 +85,7 @@ Count the number of songs each artist has for each cluster
 
 :param result:
     collection with following entry format: 
-    {label=<artist hash>, features=<song vector>, prediction=<cluster index>}
+    {label=<artist id>, features=<song vector>, prediction=<cluster index>}
 
 '''
 def centroidArtistSongCount(result, centroids):
@@ -93,7 +93,7 @@ def centroidArtistSongCount(result, centroids):
     
     for entry in result:
         print(int(entry["label"]))
-        artist = ARTIST_HASH[int(entry["label"])]
+        artist = ARTIST_ID[int(entry["label"])]
         centroid = str(entry["prediction"])
         if artist not in artists:
             artists[artist] = {}
@@ -109,7 +109,7 @@ def centroidArtistSongCount(result, centroids):
 
 if __name__ == '__main__':
     
-    extractArtistHash()
+    extractArtistId()
     
     print("Initialize Spark session")
     spark = SparkSession \
