@@ -104,10 +104,10 @@ def barChartArtistCountInCluster(artistSongsClustering, clusters):
 
     # add for each artist the count for each cluster
     for artist, clusterCounts in artistSongsClustering.items():
+        total = float(sum([int(v) for k, v in clusterCounts.items()]))
         label.append(artist)
-        print(artist, clusterCounts)
         for c, cCount in clusterCounts.items() :
-            counts[int(c)].append(cCount)
+            counts[int(c)].append((cCount/total*100))
     n = 0;
     for cluster, cCount in counts.items():
         bars.append(ax.bar(ind + width*n, cCount, width, color=COLORS[int(cluster)]))
