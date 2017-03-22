@@ -8,7 +8,7 @@ Created on Mar 18, 2017
 @author: arno
 '''
 
-COLORS = ['b', 'c', 'y', 'm']
+COLORS = ['b', 'c', 'y', 'm', '#AF7FB5', '#4F6D27', '#D0A94C', '#794044', '#871606']
 
 '''
 plot 2D cluster
@@ -41,13 +41,14 @@ def plot2DSparkCluster(result, clusterCenters, xAxis="x", yAxis="y", title=''):
     y=[]
     area=[]
 
-    for idx, center in enumerate(clusterCenters):
-        xx = center[0]
-        yy = center[1]
-        color.append(COLORS[idx])
-        area.append(300)
-        x.append(xx)
-        y.append(yy)
+    if clusterCenters is not None:
+        for idx, center in enumerate(clusterCenters):
+            xx = center[0]
+            yy = center[1]
+            color.append(COLORS[idx])
+            area.append(300)
+            x.append(xx)
+            y.append(yy)
 
     plt.scatter(x,y,c=color,s=area, marker='s', linewidths=3.0)
 

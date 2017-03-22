@@ -32,9 +32,11 @@ CENTER_VECTORS = map(lambda center: Vectors.dense(center), CENTERS)
 ARTIST_ID = {}
 
 def extractArtistId():
+    mapping = {}
     for line in open(ARTIST_ID_FILE):
         line = line.rstrip('\n').split()
-        ARTIST_ID[int(line[1])] = line[0]
+        mapping[int(line[1])] = line[0]
+    return mapping
 
 '''
 Perform kmeans clustering with an prior estimation of the centroids
@@ -85,7 +87,9 @@ Count the number of songs each artist has for each cluster
 '''
 def centroidArtistSongCount(result, centroids):
     artists={}
-
+    
+    ARTIST_ID = extractArtistId()
+    
     for entry in result:
         artist = ARTIST_ID[int(entry["label"])]
         centroid = str(entry["prediction"])
