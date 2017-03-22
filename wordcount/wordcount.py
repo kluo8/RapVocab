@@ -22,6 +22,7 @@ WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
 DIVERSITY_REGULAR_FILE = OUTPUT + 'diversity_regular.txt'
 SONG_VERCTOR = OUTPUT + 'song_vectors.txt'
+SONG_VERCTOR_PY_CLUSTERING = OUTPUT + 'song_vectors_pyclustering.txt'
 ARTIST_ID_TABLE = OUTPUT + 'artist_id.txt'
 
 
@@ -84,10 +85,16 @@ def buildSongVectorSVM(song, artist, artistId):
     total_tokens = nltk.word_tokenize(song)
     uniqueToken = set(total_tokens)
     entry = ''.join([str(artistId), ' 1:', str(len(total_tokens)), ' 2:' , str(len(uniqueToken)), '\n'])
+    entryPyCl = ''.join([str(len(total_tokens)), ' ' , str(len(uniqueToken)), '\n'])
 
     f = open(SONG_VERCTOR, 'a')
+    fPyCl = open(SONG_VERCTOR_PY_CLUSTERING, 'a')
+    
     f.write(entry)
+    fPyCl.write(entryPyCl)
+    
     f.close()
+    fPyCl.close()
 
 if __name__ == '__main__':
 
@@ -95,6 +102,8 @@ if __name__ == '__main__':
     f = open(DIVERSITY_REGULAR_FILE, 'w')
     f.close()
     f = open(SONG_VERCTOR, 'w')
+    f.close()
+    f = open(SONG_VERCTOR_PY_CLUSTERING, 'w')
     f.close()
 
     processData(DATA_AZLYRICS_PATH)
