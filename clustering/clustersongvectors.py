@@ -51,8 +51,9 @@ def kmeansEstimator(dataset, nClusters):
     centers = model.clusterCenters()
 
     result = model.transform(dataset)
-    plotDiversitySizeClustering(result.collect(), centers, "Size", "Diversity", "Song Analysis by Size and Diversity with Kmens||")
-
+    listResult = result.collect()
+    plotDiversitySizeClustering(listResult, centers, "Size", "Diversity", "Song Analysis by Size and Diversity with Kmens||")
+    centroidArtistSongCount(listResult, centers)
 
 ''''
 Perform Kmeans Clustering with centroids predefined
@@ -111,8 +112,8 @@ if __name__ == '__main__':
     print("Read dataset")
     dataset = spark.read.format("libsvm").load(HDFS_LOCAL_ACCESS + SONG_VECTORS_FILE)
 
-#     kmeansEstimator(dataset, 4)
-    kmeansInitialClusters(dataset)
+    kmeansEstimator(dataset, 4)
+#     kmeansInitialClusters(dataset)
 
 
     spark.stop()

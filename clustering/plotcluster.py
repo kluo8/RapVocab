@@ -7,7 +7,6 @@ Created on Mar 18, 2017
 
 @author: arno
 '''
-ax = None
 
 COLORS = ['b', 'c', 'y', 'm']
 
@@ -74,14 +73,6 @@ def plotDiversitySizeClustering(result, clusterCenters, xAxis="x", yAxis="y", ti
     plt.show()
 
 
-def autolabel(rects):
-
-    for rect in rects:
-        height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
-                '%d' % int(height),
-                ha='center', va='bottom')
-
 
 '''
 Bar chart
@@ -114,16 +105,21 @@ def barChartArtistCountInCluster(artistSongsClustering, clusters):
         n+=1
 
     # add some text for labels, title and axes ticks
-    ax.set_ylabel('Nb of Songs')
-    ax.set_title('Artist Song Count for Each Cluster ')
-    ax.set_xticks(ind + width /clusterNb)
+    ax.set_ylabel('Percentage of Songs')
+    ax.set_title('Artist Song Count for Each Cluster')
+    ax.set_xticks(ind + width * clusterNb/2)
     ax.set_xticklabels(artistSongsClustering.keys())
 
     allBars = map(lambda x: x[0], bars)
     ax.legend(allBars, [str(k) + " - " + str(v) for k, v in enumerate(clusters)])
 
-#     for bar in bars:
-#         autolabel(bar)
+    for bar in bars:
+        for rect in bar:
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2.,
+                     1.05*height,
+                    '%d%%' % int(height),
+                    ha='center', va='bottom')
 
     plt.show()
 
