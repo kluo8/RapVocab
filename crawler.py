@@ -8,7 +8,7 @@ import time
 
 
 # Method that finds all links within each url
-def findAllLinks(url, links, regex, myFile):
+def findAllLinks(url, links, regex, myFile, artist):
     # Open the URL
     soup = BeautifulSoup(urlopen(url), "html.parser")
 
@@ -16,7 +16,6 @@ def findAllLinks(url, links, regex, myFile):
 
     # Find all anchor tags to retrieve the link
     for link in soup.findAll('a'):
-
 
         # Ensures that the anchor tag has an href attribute before continuing
         if link.has_attr('href'):
@@ -29,6 +28,7 @@ def findAllLinks(url, links, regex, myFile):
             # Verifies that the link matches the given regular expression
             # and verifies that the link does not already exists in the set
             if regex.match(link['href']) and (fullURL not in links) and (song_title not in all_song_titles):
+
                 print (link.text)
 
                 # Extracts text from the given URL
@@ -43,7 +43,13 @@ def findAllLinks(url, links, regex, myFile):
 
                 # Time delay to prevent getting blacklisted from the lyrics website
                 time.sleep(10)
-                
+
+    if (len(all_song_titles) != 0):
+        f = open('data/artist_songtitle.txt', 'a')
+        f.write(artist + ": " + str(all_song_titles) + "\n")
+        f.close()
+    else:
+        print ("Error.")
             
 # Extracts text from each web page
 def extractText(url, regex):
@@ -101,10 +107,9 @@ if __name__ == '__main__':
                 "../" + lyrics_artist_path + "/" + "([A-Za-z0-9/.?=&-]*)")
     
             foldername = "data/"
-            my_file = open(foldername + "azlyrics/" +
-                          artist + ".txt", "w")
+            my_file = open(foldername + "azlyrics/" + artist + ".txt", "w")
 
-            findAllLinks(url, links, regex, my_file)
+            findAllLinks(url, links, regex, my_file, artist)
 
             my_file.close()
 
