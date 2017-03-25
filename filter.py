@@ -25,7 +25,7 @@ def main(filter):
         tokens = []
         # Tokenizes entire text
         tokens = nltk.word_tokenize(content)
-
+        print (filename + "\t" + str(len(tokens)))
         if filter == "L":
             # Lemmatizes only the nouns
             tokens = [WordNetLemmatizer().lemmatize(x) for x in tokens]
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print ("No filter chosen.")
     else:
-        valid_filters = ["L", "P"]
+        valid_filters = ["L", "P", "N"]
         filter = str(sys.argv[1])
 
         if filter in valid_filters:
