@@ -2,6 +2,7 @@
 
 import sys
 sys.path.append('../')
+from plotdata import plotMetadata
 from libs import iohelper
 import re
 import os
@@ -54,7 +55,7 @@ def processData(path):
 
     ID = 1
     artistIdTable = {}
-
+    diversity = {}
 
     idFile = open(ARTIST_ID_TABLE, 'w')
     diversityFile = open(DIVERSITY_REGULAR_FILE, 'w')
@@ -69,11 +70,14 @@ def processData(path):
 
         wordsTuple = wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
         nbSongs = songProcessing(artist, artistIdTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
-        diversityFile.write(''.join([artist, ': ', str(wordsTuple[1]), ';',wordsTuple[2], ";", str(nbSongs), '\n']))
+        diversityFile.write(''.join([artist, ':', str(wordsTuple[1]), ';',wordsTuple[2], ";", str(nbSongs), '\n']))
+        diversity[artist] = {'nbUniqueTokens': wordsTuple[1], 'nbTokens': wordsTuple[2], 'nbSongs': nbSongs}
         
     diversityFile.close()
     idFile.close()
-
+#     plotMetadata(diversity)
+    
+    
 
 
 # Analyze songs individually
@@ -114,9 +118,6 @@ if __name__ == '__main__':
     f.close()
 
     processData(DATA_AZLYRICS_PATH)
-
-
-
 
 
 
