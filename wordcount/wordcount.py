@@ -16,7 +16,7 @@ SPARK_CONTEXT = SparkContext(conf=SPARK_CONF)
 HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
-DATA_PATH = WORKING_DIR + "/../data/"
+DATA_PATH = WORKING_DIR + "/../data"
 DATA_AZLYRICS_PATH = DATA_PATH + "/azlyrics/"
 WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
@@ -89,10 +89,10 @@ def buildSongVectorSVM(song, artist, artistId):
 
     f = open(SONG_VERCTOR, 'a')
     fPyCl = open(SONG_VERCTOR_PY_CLUSTERING, 'a')
-    
+
     f.write(entry)
     fPyCl.write(entryPyCl)
-    
+
     f.close()
     fPyCl.close()
 

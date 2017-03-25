@@ -1,6 +1,6 @@
 #output
 wordcount/output/
-
+classification/plots/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
