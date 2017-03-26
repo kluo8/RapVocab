@@ -2,6 +2,7 @@
 
 import sys
 sys.path.append('../')
+from plotdata import plotMetadata
 from libs import iohelper
 import re
 import os
@@ -16,7 +17,7 @@ SPARK_CONTEXT = SparkContext(conf=SPARK_CONF)
 HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
-DATA_PATH = WORKING_DIR + "/../data/"
+DATA_PATH = WORKING_DIR + "/../data"
 DATA_AZLYRICS_PATH = DATA_PATH + "/azlyrics/"
 WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
@@ -25,6 +26,13 @@ SONG_VERCTOR = OUTPUT + 'song_vectors.txt'
 SONG_VERCTOR_PY_CLUSTERING = OUTPUT + 'song_vectors_pyclustering.txt'
 ARTIST_ID_TABLE = OUTPUT + 'artist_id.txt'
 
+
+def countTotal(counts):
+    sum = 0
+    for w in counts.collect():
+        sum+=int(w[1])
+    return sum
+        
 
 # Count occurences of each different word an artist uses
 def wordCountByArtist(artist, filePath, version='regular'):
@@ -37,34 +45,39 @@ def wordCountByArtist(artist, filePath, version='regular'):
         reduceByKey(lambda x, y: x + y).\
         sortBy(lambda (word, count): count, False)
 
+    totalWords = countTotal(counts)
+
     counts.saveAsTextFile(outputFile)
-    f = open(DIVERSITY_REGULAR_FILE, 'a')
-    f.write(''.join([artist, ': ', str(counts.count()), '\n']))
-    f.close()
+    return (artist, str(counts.count()), str(totalWords))
 
 # Process data from a lyrics directory
 def processData(path):
 
     ID = 1
     artistIdTable = {}
+    diversity = {}
 
-
+    idFile = open(ARTIST_ID_TABLE, 'w')
+    diversityFile = open(DIVERSITY_REGULAR_FILE, 'w')
     files = iohelper.listDirectoryContent(path, True)
     for f in files:
         artist = re.sub(r'\.txt', '', f)
 
         if artist not in artistIdTable:
             artistIdTable[artist] = ID
+            idFile.write(''.join([artist, " ", str(ID), '\n']))
             ID+=1
 
-        wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
-        songProcessing(artist, artistIdTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
-
-    f = open(ARTIST_ID_TABLE, 'w')
-    for key, value in artistIdTable.iteritems():
-        f.write(''.join([str(key), " ", str(value), '\n']))
-    f.close()
-
+        wordsTuple = wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
+        nbSongs = songProcessing(artist, artistIdTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
+        diversityFile.write(''.join([artist, ':', str(wordsTuple[1]), ';',wordsTuple[2], ";", str(nbSongs), '\n']))
+        diversity[artist] = {'nbUniqueTokens': wordsTuple[1], 'nbTokens': wordsTuple[2], 'nbSongs': nbSongs}
+        
+    diversityFile.close()
+    idFile.close()
+#     plotMetadata(diversity)
+    
+    
 
 
 # Analyze songs individually
@@ -72,8 +85,8 @@ def songProcessing(artist, artistId, filePath, version='regular'):
 
     lines = SPARK_CONTEXT.textFile(HDFS_LOCAL_ACCESS + filePath).\
         flatMap(lambda x: x.encode('utf-8').split('\n'))
-    print("Nb songs for " + artist + ": ", lines.count())
     lines.foreach(lambda x: buildSongVectorSVM(x, artist, artistId))
+    return lines.count()
 
 
 # Build song vector where dimensions are the following: nb of words, nb unique tokens, profane (eventually
@@ -89,27 +102,22 @@ def buildSongVectorSVM(song, artist, artistId):
 
     f = open(SONG_VERCTOR, 'a')
     fPyCl = open(SONG_VERCTOR_PY_CLUSTERING, 'a')
-    
+
     f.write(entry)
     fPyCl.write(entryPyCl)
-    
+
     f.close()
     fPyCl.close()
 
 if __name__ == '__main__':
 
         # clear diversity and vector files
-    f = open(DIVERSITY_REGULAR_FILE, 'w')
-    f.close()
     f = open(SONG_VERCTOR, 'w')
     f.close()
     f = open(SONG_VERCTOR_PY_CLUSTERING, 'w')
     f.close()
 
     processData(DATA_AZLYRICS_PATH)
-
-
-
 
 
 
