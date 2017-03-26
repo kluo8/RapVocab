@@ -13,6 +13,7 @@ def findAllLinks(url, links, regex, myFile, artist):
     soup = BeautifulSoup(urlopen(url), "html.parser")
 
     all_song_titles = []
+    text = None
 
     # Find all anchor tags to retrieve the link
     for link in soup.findAll('a'):
@@ -48,6 +49,7 @@ def findAllLinks(url, links, regex, myFile, artist):
         f = open('data/artist_songtitle.txt', 'a')
         f.write(artist + ": " + str(all_song_titles) + "\n")
         f.close()
+        print ("Done.")
     else:
         print ("Error.")
             
@@ -100,7 +102,7 @@ if __name__ == '__main__':
         artist = re.sub(r'/([A-Za-z0-9-]+)/', '', pathURL)
         artist = re.sub(r'.html', '', artist)
 
-        lyrics_artist_path = "lyrics/" + artist
+        lyrics_artist_path = "lyrics/" + "kanyewest"
 
         if artist:
             regex = re.compile(
@@ -108,9 +110,7 @@ if __name__ == '__main__':
     
             foldername = "data/"
             my_file = open(foldername + "azlyrics/" + artist + ".txt", "w")
-
             findAllLinks(url, links, regex, my_file, artist)
-
             my_file.close()
 
     sys.exit()

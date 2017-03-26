@@ -11,6 +11,7 @@ def main(filter):
     path = 'data/azlyrics/'
 
     for filename in os.listdir(path):
+        print (".", end=" ")
         lyric_file = open("data/azlyrics/" + filename, encoding="utf8")
         content = lyric_file.read()
         # Makes all words lowercase
@@ -25,7 +26,7 @@ def main(filter):
         tokens = []
         # Tokenizes entire text
         tokens = nltk.word_tokenize(content)
-        print (filename + "\t" + str(len(tokens)))
+        
         if filter == "L":
             # Lemmatizes only the nouns
             tokens = [WordNetLemmatizer().lemmatize(x) for x in tokens]
@@ -47,6 +48,7 @@ def main(filter):
 
         lyric_file.close()
         output_file.close()
+    print ("Done.")
 
 def load_badwords():
     with open("custom_badwords.txt") as f:
