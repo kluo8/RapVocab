@@ -13,6 +13,7 @@ def findAllLinks(url, links, regex, myFile, artist):
     soup = BeautifulSoup(urlopen(url), "html.parser")
 
     all_song_titles = []
+    all_song_titles_output = ""
     text = None
 
     # Find all anchor tags to retrieve the link
@@ -40,6 +41,7 @@ def findAllLinks(url, links, regex, myFile, artist):
                 if text is not None:
                     links.append(fullURL)
                     all_song_titles.append(song_title)
+                    all_song_titles_output += song_title + "_" 
                     myFile.write(str(text) + "\n")
 
                 # Time delay to prevent getting blacklisted from the lyrics website
@@ -47,7 +49,7 @@ def findAllLinks(url, links, regex, myFile, artist):
 
     if (len(all_song_titles) != 0):
         f = open('data/artist_songtitle.txt', 'a')
-        f.write(artist + ": " + str(all_song_titles) + "\n")
+        f.write(artist + "::" + all_song_titles_output[:-1] + "\n")
         f.close()
         print ("Done.")
     else:
@@ -102,7 +104,7 @@ if __name__ == '__main__':
         artist = re.sub(r'/([A-Za-z0-9-]+)/', '', pathURL)
         artist = re.sub(r'.html', '', artist)
 
-        lyrics_artist_path = "lyrics/" + "kanyewest"
+        lyrics_artist_path = "lyrics/" + artist
 
         if artist:
             regex = re.compile(
