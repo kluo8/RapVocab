@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import math
 import numpy as np
+import re
 '''
 Created on Mar 18, 2017
 
@@ -110,6 +111,8 @@ def barChartArtistCountInCluster(artistSongsClustering, clusters):
     ax.set_title('Artist Song Count for Each Cluster')
     ax.set_xticks(ind + width * clusterNb/2)
     ax.set_xticklabels(artistSongsClustering.keys())
+    ax.set_xticklabels(list(map(lambda x: re.sub("(.{5})", "\\1\n", x, 0, re.DOTALL), artistSongsClustering.keys())))
+    
 
     allBars = map(lambda x: x[0], bars)
     ax.legend(allBars, [str(k) + " - " + str(v) for k, v in enumerate(clusters)])

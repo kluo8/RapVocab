@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import operator
+import re
 
 '''
 Created on Mar 25, 2017
@@ -26,7 +27,7 @@ def plotArtistClassification(similars, artist, key):
     ax.set_ylabel('Cosine Similarity')
     ax.set_title('Similarity with Rapper: ' + artist)
     ax.set_xticks(margin + ind + width/2)
-    ax.set_xticklabels(list(map(lambda x: x[0], sortedSim)))
+    ax.set_xticklabels(list(map(lambda x: re.sub("(.{5})", "\\1\n", x[0], 0, re.DOTALL), sortedSim)))
 
 
     for bar in bars:
@@ -40,5 +41,6 @@ def plotArtistClassification(similars, artist, key):
 
     fig.set_size_inches(22.5, 10.5)
     fig.savefig("plots/" + artist + ".png", dpi=100)
+    plt.close(fig)
 
 

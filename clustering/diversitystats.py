@@ -17,8 +17,8 @@ Created on Mar 22, 2017
 '''
 WORKING_DIR = os.getcwd()
 HDFS_LOCAL_ACCESS = "file://"
-SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering.txt"
-SONG_VECTORS_FILE_SPARK = WORKING_DIR + "/../wordcount/output/song_vectors.txt"
+SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering_regular.txt"
+SONG_VECTORS_FILE_SPARK = WORKING_DIR + "/../wordcount/output/song_vectors_regular.txt"
 
 MAX_SIZE = 0
 
@@ -43,6 +43,7 @@ def generateBoxPlot(data):
     
     fig, ax = plt.subplots()
     bp = ax.boxplot(data)
+    ax.set_title("Song Lexical Richness Boxplot")
     whiskers = sorted(list(bp["whiskers"][0].get_ydata()) + list(bp["whiskers"][1].get_ydata()) + [np.median(list(data))])
     plt.show()
     plt.cla()

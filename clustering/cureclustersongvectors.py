@@ -9,7 +9,7 @@ Created on Mar 22, 2017
 @author: arno
 '''
 
-SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering.txt"
+SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering_regular.txt"
 
 
 # read data for clustering from some file

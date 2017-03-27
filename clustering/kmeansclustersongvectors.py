@@ -19,7 +19,7 @@ Use python 2.7
 HDFS_LOCAL_ACCESS = "file://"
 
 WORKING_DIR = os.getcwd()
-SONG_VECTORS_FILE = WORKING_DIR + "/../wordcount/output/song_vectors.txt"
+SONG_VECTORS_FILE = WORKING_DIR + "/../wordcount/output/song_vectors_regular.txt"
 ARTIST_ID_FILE = WORKING_DIR + "/../wordcount/output/artist_id.txt"
 
 CENTERS = [[500.0, 0.0],
