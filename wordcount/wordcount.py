@@ -2,7 +2,6 @@
 
 import sys
 sys.path.append('../')
-from plotdata import plotMetadata
 from libs import iohelper
 import re
 import os
@@ -19,11 +18,10 @@ HDFS_LOCAL_ACCESS = "file://"
 WORKING_DIR = os.getcwd()
 DATA_PATH = WORKING_DIR + "/../data"
 DATA_AZLYRICS_PATH = DATA_PATH + "/azlyrics/"
+DATA_LEMMATIZE_PATH = DATA_PATH + "/lemmatization/"
+DATA_PROFANITY_PATH = DATA_PATH + "/profanity/"
 WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
-DIVERSITY_REGULAR_FILE = OUTPUT + 'diversity_regular.txt'
-SONG_VERCTOR = OUTPUT + 'song_vectors.txt'
-SONG_VERCTOR_PY_CLUSTERING = OUTPUT + 'song_vectors_pyclustering.txt'
 ARTIST_ID_TABLE = OUTPUT + 'artist_id.txt'
 
 
@@ -51,25 +49,28 @@ def wordCountByArtist(artist, filePath, version='regular'):
     return (artist, str(counts.count()), str(totalWords))
 
 # Process data from a lyrics directory
-def processData(path):
+def processData(path, version):
 
     ID = 1
     artistIdTable = {}
     diversity = {}
 
     idFile = open(ARTIST_ID_TABLE, 'w')
-    diversityFile = open(DIVERSITY_REGULAR_FILE, 'w')
+    diversityFile = open(''.join([OUTPUT, '/diversity_', version, '.txt']), 'w')
     files = iohelper.listDirectoryContent(path, True)
     for f in files:
         artist = re.sub(r'\.txt', '', f)
+        print("processing: " + artist + " " + version)
 
         if artist not in artistIdTable:
             artistIdTable[artist] = ID
             idFile.write(''.join([artist, " ", str(ID), '\n']))
             ID+=1
 
-        wordsTuple = wordCountByArtist(artist, ''.join([DATA_AZLYRICS_PATH, f]))
-        nbSongs = songProcessing(artist, artistIdTable[artist], ''.join([DATA_AZLYRICS_PATH, f]))
+        wordsTuple = wordCountByArtist(artist, ''.join([path, f]), version=version)
+        nbSongs = songProcessing(artist, artistIdTable[artist], ''.join([path, f]), version=version)
+        print(wordsTuple)
+        print("nb songs: " + str(nbSongs))
         diversityFile.write(''.join([artist, ':', str(wordsTuple[1]), ';',wordsTuple[2], ";", str(nbSongs), '\n']))
         diversity[artist] = {'nbUniqueTokens': wordsTuple[1], 'nbTokens': wordsTuple[2], 'nbSongs': nbSongs}
         
@@ -77,22 +78,20 @@ def processData(path):
     idFile.close()
 #     plotMetadata(diversity)
     
-    
-
 
 # Analyze songs individually
 def songProcessing(artist, artistId, filePath, version='regular'):
 
     lines = SPARK_CONTEXT.textFile(HDFS_LOCAL_ACCESS + filePath).\
         flatMap(lambda x: x.encode('utf-8').split('\n'))
-    lines.foreach(lambda x: buildSongVectorSVM(x, artist, artistId))
+    lines.foreach(lambda x: buildSongVectorSVM(x, artist, artistId, version))
     return lines.count()
 
 
 # Build song vector where dimensions are the following: nb of words, nb unique tokens, profane (eventually
 # use libSVM format: <label> <index1>:<value1> <index2>:<value2>
 # use song length and diversity
-def buildSongVectorSVM(song, artist, artistId):
+def buildSongVectorSVM(song, artist, artistId, version):
 
     song = song.decode('utf-8').lower()
     total_tokens = nltk.word_tokenize(song)
@@ -100,8 +99,8 @@ def buildSongVectorSVM(song, artist, artistId):
     entry = ''.join([str(artistId), ' 1:', str(len(total_tokens)), ' 2:' , str(len(uniqueToken)), '\n'])
     entryPyCl = ''.join([str(len(total_tokens)), ' ' , str(len(uniqueToken)), '\n'])
 
-    f = open(SONG_VERCTOR, 'a')
-    fPyCl = open(SONG_VERCTOR_PY_CLUSTERING, 'a')
+    f = open(''.join([OUTPUT,'song_vectors_', version, '.txt']), 'a')
+    fPyCl = open(''.join([OUTPUT,'song_vectors_pyclustering_', version,'.txt']), 'a')
 
     f.write(entry)
     fPyCl.write(entryPyCl)
@@ -111,14 +110,13 @@ def buildSongVectorSVM(song, artist, artistId):
 
 if __name__ == '__main__':
 
-        # clear diversity and vector files
-    f = open(SONG_VERCTOR, 'w')
-    f.close()
-    f = open(SONG_VERCTOR_PY_CLUSTERING, 'w')
-    f.close()
-
-    processData(DATA_AZLYRICS_PATH)
-
+    #Note that output directory is cleaned beforehand if ran through shell script
+    
+    processData(DATA_AZLYRICS_PATH, "regular")
+    processData(DATA_LEMMATIZE_PATH, "lemmatize")
+    processData(DATA_PROFANITY_PATH, "profanity")
+    
+    
 
 
 

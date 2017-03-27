@@ -4,6 +4,7 @@ import operator
 import matplotlib.pyplot as plt
 import math
 import numpy as np
+import re
 
 '''
 Created on Mar 25, 2017
@@ -35,7 +36,7 @@ def plotMetadata(data, desiredMetadata, title, yaxis):
     ax.set_xlabel('Rappers')
     ax.set_title(title)
     ax.set_xticks(margin + ind + width/2)
-    ax.set_xticklabels(list(map(lambda x: x[0], sortedtoplot)))
+    ax.set_xticklabels(list(map(lambda x: re.sub("(.{5})", "\\1\n", x[0], 0, re.DOTALL), sortedtoplot)))
 
     for rect in bars:
         height = rect.get_height()
@@ -44,21 +45,29 @@ def plotMetadata(data, desiredMetadata, title, yaxis):
                 '%d' % int(height),
                 ha='center', va='bottom')
 
-    plt.show()
+    fig.set_size_inches(22.5, 10.5)
+    fig.savefig("output/plots/" + title + ".png", dpi=100)
 
 
 
-if __name__ == '__main__':
-    
+
+
+def plotoutput(path, version):
     metadata = {}
-    for line in open('output/diversity_regular.txt'):
+    for line in open(path):
         linesplit = line.split(":")
         artist = linesplit[0]
         metada = linesplit[1].split(";")
         metadata[artist] = {'nbUniqueTokens': int(metada[0]), 'nbTokens': int(metada[1]), 'nbSongs': int(metada[2])}
     
-    plotMetadata(metadata, 'nbUniqueTokens', "Number of Unique tokens per Rapper", "Unique Tokens")
-    plotMetadata(metadata, 'nbTokens', "Number of Tokens per Rapper", "Tokens")
+    plotMetadata(metadata, 'nbUniqueTokens', "Number of Unique tokens per Rapper (" + version + ")", "Unique Tokens")
+    plotMetadata(metadata, 'nbTokens', "Number of Tokens per Rapper (" + version + ")", "Tokens")
         
         
-        
+if __name__ == '__main__':
+    plotoutput('output/diversity_regular.txt', "regular")
+    plotoutput('output/diversity_lemmatize.txt', "lemmatize")
+    plotoutput('output/diversity_profanity.txt', "profanity")
+    
+    
+      

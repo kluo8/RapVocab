@@ -14,10 +14,8 @@ if [ -d "$OUTPUT" ]; then
   rm -rf $OUTPUT
 fi
 mkdir $OUTPUT
+mkdir $OUTPUT/plots
 
 chmod 775 wordcount.py
 
 ./wordcount.py
-
-echo "Diversity (Regular) Results:"
-cat output/diversity_regular.txt

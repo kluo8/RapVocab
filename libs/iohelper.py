@@ -20,7 +20,6 @@ def listDirectoryContent(path, isFile):
                     ( (os.path.isfile(iPath) and isFile) or \
                       (os.path.isdir(iPath) and not isFile) ):
                 files.append(i)
-        print(files)
         return files
     else:
         raise Exception('Directory not found')
