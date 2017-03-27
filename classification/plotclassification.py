@@ -9,14 +9,17 @@ Created on Mar 25, 2017
 @author: arno
 '''
 
-def plotArtistClassification(similars, artist, key):
+def plotItemClassification(similars, item, key, title, limit = -1):
     similars.pop(key)
 
     sortedSim = sorted(similars.items(), key=operator.itemgetter(1), reverse=True)
+    
+    if limit > -1:
+        sortedSim = sortedSim[0:limit]
 
     fig, ax = plt.subplots()
 
-    ind = np.arange(len(similars))
+    ind = np.arange(len(sortedSim))
 
     width = 0.3
     margin = 0.5
@@ -25,7 +28,7 @@ def plotArtistClassification(similars, artist, key):
 
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Cosine Similarity')
-    ax.set_title('Similarity with Rapper: ' + artist)
+    ax.set_title(title)
     ax.set_xticks(margin + ind + width/2)
     ax.set_xticklabels(list(map(lambda x: re.sub("(.{5})", "\\1\n", x[0], 0, re.DOTALL), sortedSim)))
 
@@ -40,7 +43,7 @@ def plotArtistClassification(similars, artist, key):
     axes.set_ylim([0, 1.10])
 
     fig.set_size_inches(22.5, 10.5)
-    fig.savefig("plots/" + artist + ".png", dpi=100)
+    fig.savefig("plots/" + item + ".png", dpi=100)
     plt.close(fig)
 
 

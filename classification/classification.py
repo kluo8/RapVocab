@@ -2,11 +2,12 @@
 import sys
 import os
 sys.path.append('../')
-from plotclassification import plotArtistClassification
+from plotclassification import plotItemClassification
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from libs import iohelper
 import re
+import operator
 '''
 Created on Mar 23, 2017
 
@@ -15,6 +16,8 @@ Created on Mar 23, 2017
 
 WORKING_DIR = os.getcwd()
 DATA_LYRICS_PATH = WORKING_DIR + "/../data/azlyrics/"
+DATA_SONG_NAMES_PATH = WORKING_DIR + "/../data/artist_songtitle.txt"
+
 
 
 
@@ -23,9 +26,21 @@ def gatherSongs():
     documents = []
     for f in files :
         for line in open(DATA_LYRICS_PATH + f):
-            documents.append(open(f).read())
+            documents.append(line.strip())
     
     return documents
+
+def gatherSongNames():
+    songnames = []
+    for line in open(DATA_SONG_NAMES_PATH):
+        lineArr = line.split('::')
+        artist = lineArr[0]
+        songs = lineArr[1]
+        songsArr = songs.split('_')
+        songnames += list(map(lambda x: ''.join([artist, '::', x.strip()]), songsArr))
+    
+    return songnames
+  
     
 def artistName(filename):
     return re.sub("\..*$", "", filename)
@@ -39,6 +54,43 @@ def gatherArtistLyrics():
     
     return documents
 
+
+def songSimilarity():
+    songs = gatherSongs()
+    songNames = gatherSongNames()
+    print(len(songs), len(songNames))
+    
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(songs)
+    similarity = cosine_similarity(tfidf_matrix[0:len(songs)], tfidf_matrix)
+    
+    topNsimilarities = ''
+    
+    simMap = {}
+    for i, sims in enumerate(similarity):
+        songSim = {}
+        for j, sim in enumerate(sims):
+            songSim[songNames[j]] = sim
+            
+        song = songNames[i]
+        simMap[song] = songSim
+        topNsimilarities = ''.join([topNsimilarities, topNSimilarItems(simMap[song], song, song), '\n'])
+    
+    f = open("songSimilarities.txt", 'w')
+    f.write(topNsimilarities)
+    f.close()
+    
+    
+def topNSimilarItems(similars, item, key, limit=10):
+    similars.pop(key)
+    
+    sortedSim = sorted(similars.items(), key=operator.itemgetter(1), reverse=True)
+    if limit > -1:
+        sortedSim = sortedSim[0:limit]
+    
+    entry = ''.join([item,"\t", ', '.join(list(map(lambda x: x[0], sortedSim)))])
+    print(entry)
+    return entry
 
 
 def artistSimilarity():
@@ -57,12 +109,14 @@ def artistSimilarity():
             
         artist = artistName(artistNames[i])
         simMap[artist] = artistSim
-        plotArtistClassification(simMap[artist], artist, artist)
+        plotItemClassification(simMap[artist], artist, artist, "Similarity with Rapper: " + artist)
             
 
 if __name__ == '__main__':
     
-    artistSimilarity()
+#     artistSimilarity()
+    songSimilarity()
+    
     
     
     
