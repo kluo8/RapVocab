@@ -65,9 +65,13 @@ def plotoutput(path, version):
         
         
 if __name__ == '__main__':
-    plotoutput('output/diversity_regular.txt', "regular")
-    plotoutput('output/diversity_lemmatize.txt', "lemmatize")
-    plotoutput('output/diversity_profanity.txt', "profanity")
+#     plotoutput('output/diversity_regular.txt', "regular")
+#     plotoutput('output/diversity_lemmatize.txt', "lemmatize")
+#     plotoutput('output/diversity_profanity.txt', "profanity")
+    
+    plotoutput('output/diversity_26k_regular.txt', "regular_26k")
+    plotoutput('output/diversity_26k_profanity.txt', "profanity_26k")
+    plotoutput('output/diversity_26k_lemmatize.txt', "lemmatize_26k")
     
     
       

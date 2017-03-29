@@ -18,8 +18,11 @@ HDFS_LOCAL_ACCESS = "file://"
 WORKING_DIR = os.getcwd()
 DATA_PATH = WORKING_DIR + "/../data"
 DATA_AZLYRICS_PATH = DATA_PATH + "/azlyrics/"
+DATA_AZLYRICS_26K_PATH = DATA_PATH + "/26k/azlyrics/"
 DATA_LEMMATIZE_PATH = DATA_PATH + "/lemmatization/"
+DATA_LEMMATIZE_26K_PATH = DATA_PATH + "/26k/lemmatization/"
 DATA_PROFANITY_PATH = DATA_PATH + "/profanity/"
+DATA_PROFANITY_26K_PATH = DATA_PATH + "/26k/profanity/"
 WORD_COUNT_OUTPUT = WORKING_DIR + "/output/counts/"
 OUTPUT = WORKING_DIR + "/output/"
 ARTIST_ID_TABLE = OUTPUT + 'artist_id.txt'
@@ -112,9 +115,12 @@ if __name__ == '__main__':
 
     #Note that output directory is cleaned beforehand if ran through shell script
     
-    processData(DATA_AZLYRICS_PATH, "regular")
-    processData(DATA_LEMMATIZE_PATH, "lemmatize")
-    processData(DATA_PROFANITY_PATH, "profanity")
+#     processData(DATA_AZLYRICS_PATH, "regular")
+#     processData(DATA_LEMMATIZE_PATH, "lemmatize")
+#     processData(DATA_PROFANITY_PATH, "profanity")
+    processData(DATA_AZLYRICS_26K_PATH, "26k_regular")
+    processData(DATA_PROFANITY_26K_PATH, "26k_profanity")
+    processData(DATA_LEMMATIZE_26K_PATH, "26k_lemmatize")
     
     
 
