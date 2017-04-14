@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+'''
+Created on Mar 23, 2017
+@author: arno
+
+Classify the different rappers and their songs based on TF.IDF score
+of the entire voabulary set of a rapper or of the lyrics of a song.
+
+The module produces the following:
+    - For all songs, find the top N most similar ones (writes results in songSimilarities.txt)
+    - For each rappers, list them the other rappers most similar to it (plots generated in plots/ subfolder) 
+    - Cluster the different rappers
+'''
+
 import sys
 import os
 sys.path.append('../')
@@ -9,19 +22,15 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 from libs import iohelper
 import re
 import operator
-'''
-Created on Mar 23, 2017
 
-@author: arno
-'''
 
 WORKING_DIR = os.getcwd()
 DATA_LYRICS_PATH = WORKING_DIR + "/../data/azlyrics/"
 DATA_SONG_NAMES_PATH = WORKING_DIR + "/../data/artist_songtitle.txt"
 
-
-
-
+'''
+Get lyrics for each song
+'''
 def gatherSongs():
     files = iohelper.listDirectoryContent(DATA_LYRICS_PATH, True)
     documents = []
@@ -31,6 +40,9 @@ def gatherSongs():
     
     return documents
 
+'''
+Get song names
+'''
 def gatherSongNames():
     songnames = []
     for line in open(DATA_SONG_NAMES_PATH):
@@ -82,7 +94,10 @@ def songSimilarity():
     f.write(topNsimilarities)
     f.close()
     
-    
+
+'''
+Find the top similar items based on cosine3 similarity
+'''
 def topNSimilarItems(similars, item, key, limit=10):
     similars.pop(key)
     
@@ -94,7 +109,9 @@ def topNSimilarItems(similars, item, key, limit=10):
     print(entry)
     return entry
 
-
+'''
+Find all rappers' top similar rappers
+'''
 def artistSimilarity():
     lyrics = gatherArtistLyrics()
     tfidf_vectorizer = TfidfVectorizer()
@@ -113,6 +130,9 @@ def artistSimilarity():
         simMap[artist] = artistSim
         plotItemClassification(simMap[artist], artist, artist, "Similarity with Rapper: " + artist)
         
+'''
+Cluster rappers based on their vocabulary set
+'''
 def artistClustering():
     artistLyrics = gatherArtistLyrics()
     tfidf_vectorizer = TfidfVectorizer()
@@ -130,10 +150,7 @@ def artistClustering():
     for k,v in clusterGroups.items():
         print(v)
         
-    
-    
-            
-
+                
 if __name__ == '__main__':
     
     artistSimilarity()

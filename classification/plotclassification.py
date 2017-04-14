@@ -1,13 +1,16 @@
+'''
+Created on Mar 25, 2017
+
+Bar chart of the classification of the simililarity of an item
+
+@author: arno
+'''
+
 import matplotlib.pyplot as plt
 import numpy as np
 import operator
 import re
 
-'''
-Created on Mar 25, 2017
-
-@author: arno
-'''
 
 def plotItemClassification(similars, item, key, title, limit = -1):
     similars.pop(key)
