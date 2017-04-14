@@ -5,6 +5,7 @@ sys.path.append('../')
 from plotclassification import plotItemClassification
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from libs import iohelper
 import re
 import operator
@@ -44,6 +45,7 @@ def gatherSongNames():
     
 def artistName(filename):
     return re.sub("\..*$", "", filename)
+
 
 def gatherArtistLyrics():
     
@@ -110,12 +112,33 @@ def artistSimilarity():
         artist = artistName(artistNames[i])
         simMap[artist] = artistSim
         plotItemClassification(simMap[artist], artist, artist, "Similarity with Rapper: " + artist)
+        
+def artistClustering():
+    artistLyrics = gatherArtistLyrics()
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(artistLyrics.values())
+    km = KMeans(n_clusters=5, init='k-means++', max_iter=100, n_init=1, verbose=1)
+    km.fit(tfidf_matrix)
+    
+    artistNames = list(artistLyrics.keys())
+    clusterGroups = {}
+    for i, label in enumerate(km.labels_):
+        if label not in clusterGroups.keys():
+            clusterGroups[label] = []
+        clusterGroups[label].append(artistNames[i])
+        
+    for k,v in clusterGroups.items():
+        print(v)
+        
+    
+    
             
 
 if __name__ == '__main__':
     
-#     artistSimilarity()
+    artistSimilarity()
     songSimilarity()
+    artistClustering()
     
     
     
