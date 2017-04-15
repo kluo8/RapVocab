@@ -6,8 +6,10 @@ import re
 
 '''
 Created on Mar 29, 2017
-
 @author: arno
+
+Take the first 26K lyrics of each rapper.
+Essential to perform diversity comparison
 '''
 
 

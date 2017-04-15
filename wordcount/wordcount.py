@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 
+'''
+Count the nb of lyrics and unique lyrics
+for all the rappers and save the results
+in output files.
+
+Also create the song (diversity, size) vectors for each rapper
+'''
+
 import sys
+import shutil
 sys.path.append('../')
 from libs import iohelper
 import re
@@ -114,10 +123,14 @@ def buildSongVectorSVM(song, artist, artistId, version):
 if __name__ == '__main__':
 
     #Note that output directory is cleaned beforehand if ran through shell script
+    if os.path.exists("output"):
+        shutil.rmtree("output")
+    os.makedirs("output")
+    os.makedirs("output/plots")
     
-#     processData(DATA_AZLYRICS_PATH, "regular")
-#     processData(DATA_LEMMATIZE_PATH, "lemmatize")
-#     processData(DATA_PROFANITY_PATH, "profanity")
+    processData(DATA_AZLYRICS_PATH, "regular")
+    processData(DATA_LEMMATIZE_PATH, "lemmatize")
+    processData(DATA_PROFANITY_PATH, "profanity")
     processData(DATA_AZLYRICS_26K_PATH, "26k_regular")
     processData(DATA_PROFANITY_26K_PATH, "26k_profanity")
     processData(DATA_LEMMATIZE_26K_PATH, "26k_lemmatize")
