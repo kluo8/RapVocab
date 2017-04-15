@@ -7,6 +7,8 @@ Created on Mar 22, 2017
 
 Experiment the cure clustering algorithm on the song 2D vector (diversity, size)
 
+*** Requires wordcount.py from wordcount package to be run beforehand ***
+
 '''
 
 from pyclustering.cluster.cure import cure;

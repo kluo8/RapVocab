@@ -7,7 +7,9 @@ Analyze rappers'songs with a boxplot analysis on the lyrics diversity
 Plot the resuts in a 2D graph with clusters representing different
 ranges of of song size and diversity
 
-Display a bar chart for the percentage of each rapper's songs in each category   
+Display a bar chart for the percentage of each rapper's songs in each category
+
+*** Requires wordcount.py from wordcount package to be run beforehand ***
 
 '''
 

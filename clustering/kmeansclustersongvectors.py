@@ -7,6 +7,9 @@ Use python 2.7
 Attempt to perform kmeans clustering 
 on the songs. Songs are represented by a 
 2D vector: (size, diversity)
+
+*** Requires wordcount.py from wordcount package to be run beforehand ***
+
 '''
 
 

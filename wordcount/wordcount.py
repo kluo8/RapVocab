@@ -122,7 +122,6 @@ def buildSongVectorSVM(song, artist, artistId, version):
 
 if __name__ == '__main__':
 
-    #Note that output directory is cleaned beforehand if ran through shell script
     if os.path.exists("output"):
         shutil.rmtree("output")
     os.makedirs("output")

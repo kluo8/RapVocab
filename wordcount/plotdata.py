@@ -6,6 +6,9 @@ Created on Mar 25, 2017
 Generate an ordered bar chart plot of the diversity (nb of unique lyrics)
 of the different rappers.  Use a same number of lyrics for each rapper in
 order to compare on a same base
+
+*** Requires wordcount.py from the same package to be run beforehand ***
+
 '''
 
 import operator
