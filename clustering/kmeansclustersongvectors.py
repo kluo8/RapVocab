@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+'''
+Created on Mar 18, 2017
+Use python 2.7
+@author: arno
+
+Attempt to perform kmeans clustering 
+on the songs. Songs are represented by a 
+2D vector: (size, diversity)
+'''
+
 
 import os
 import sys
@@ -9,12 +19,7 @@ from pyspark.mllib.clustering import KMeansModel, KMeans
 from pyspark.mllib.linalg import Vectors
 from clustering.plotcluster import plotDiversitySizeClustering, barChartArtistCountInCluster
 
-'''
-Created on Mar 18, 2017
-Use python 2.7
 
-@author: arno
-'''
 
 HDFS_LOCAL_ACCESS = "file://"
 

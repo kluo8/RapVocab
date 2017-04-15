@@ -1,19 +1,22 @@
+'''
+Created on Mar 18, 2017
+@author: arno
+
+Module to plot the clusters of 2D points representing a song diversity and size
+and plot bar charts for the distribution of a rapper's songs in the different clusters
+'''
+
 
 import matplotlib.pyplot as plt
 import math
 import numpy as np
 import re
-'''
-Created on Mar 18, 2017
-
-@author: arno
-'''
 
 COLORS = ['b', 'c', 'y', 'm', '#AF7FB5', '#4F6D27', '#D0A94C', '#794044', '#871606']
 
 '''
 plot 2D cluster
-result entry format: Row(label=1.6114804284613683e+18, features=SparseVector(2, {0: 778.0, 1: 438.0}), prediction=3)
+result entry format eg: Row(label=1.6114804284613683e+18, features=SparseVector(2, {0: 778.0, 1: 438.0}), prediction=3)
 clusterCenters: coordinates of centroids
 '''
 def plot2DSparkCluster(result, clusterCenters, xAxis="x", yAxis="y", title=''):
@@ -77,7 +80,8 @@ def plotDiversitySizeClustering(result, clusterCenters, xAxis="x", yAxis="y", ti
 
 
 '''
-Bar chart
+Bar chart of the distribution (percentage) of each rapper
+songs in the different clusters
 ref: http://matplotlib.org/examples/api/barchart_demo.html
 '''
 def barChartArtistCountInCluster(artistSongsClustering, clusters):

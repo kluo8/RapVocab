@@ -1,4 +1,16 @@
 #!/usr/bin/env python
+'''
+Created on Mar 22, 2017
+@author: arno
+
+Analyze rappers'songs with a boxplot analysis on the lyrics diversity
+Plot the resuts in a 2D graph with clusters representing different
+ranges of of song size and diversity
+
+Display a bar chart for the percentage of each rapper's songs in each category   
+
+'''
+
 import os
 import sys
 sys.path.append('../')
@@ -10,11 +22,7 @@ import matplotlib as mpl
 from clustering.kmeansclustersongvectors import centroidArtistSongCount
 
 # mpl.use('agg')
-'''
-Created on Mar 22, 2017
 
-@author: arno
-'''
 WORKING_DIR = os.getcwd()
 HDFS_LOCAL_ACCESS = "file://"
 SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering_regular.txt"
@@ -39,6 +47,7 @@ def gatherSongsDiversity():
             maxSize = line[0]
     return [data, maxSize]
 
+
 def generateBoxPlot(data):
     
     fig, ax = plt.subplots()
@@ -49,6 +58,7 @@ def generateBoxPlot(data):
     plt.cla()
     plt.clf()
     return whiskers
+
 
 def assignCluster(point, boxPlot, maxSize):
     median = boxPlot[2]

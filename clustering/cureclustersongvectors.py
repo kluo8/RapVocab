@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
+'''
+Created on Mar 22, 2017
+@author: arno
+
+
+Experiment the cure clustering algorithm on the song 2D vector (diversity, size)
+
+'''
+
 from pyclustering.cluster.cure import cure;
 from pyclustering.cluster import cluster_visualizer;
 from pyclustering.utils import read_sample;
-'''
-Created on Mar 22, 2017
 
-@author: arno
-'''
 
 SONG_VECTORS_FILE = "../wordcount/output/song_vectors_pyclustering_regular.txt"
 
