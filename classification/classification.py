@@ -137,7 +137,7 @@ def artistClustering():
     artistLyrics = gatherArtistLyrics()
     tfidf_vectorizer = TfidfVectorizer()
     tfidf_matrix = tfidf_vectorizer.fit_transform(artistLyrics.values())
-    km = KMeans(n_clusters=5, init='k-means++', max_iter=100, n_init=1, verbose=1)
+    km = KMeans(n_clusters=5, init='k-means++', verbose=1)
     km.fit(tfidf_matrix)
     
     artistNames = list(artistLyrics.keys())
@@ -146,15 +146,19 @@ def artistClustering():
         if label not in clusterGroups.keys():
             clusterGroups[label] = []
         clusterGroups[label].append(artistNames[i])
-        
+    
+    f = open("rappersClustering.txt", "w")
     for k,v in clusterGroups.items():
         print(v)
+        f.write(str(v))
+        f.write("\n")
+    f.close()
         
                 
 if __name__ == '__main__':
     
-    artistSimilarity()
-    songSimilarity()
+#     artistSimilarity()
+#     songSimilarity()
     artistClustering()
     
     

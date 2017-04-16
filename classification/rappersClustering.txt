@@ -1,0 +1,5 @@
+['youngthug', 'lilwayne']
+['kanyewest', 'bustarhymes', 'game', '2pac', 'eminem', 'jayz', 'outkast', 'kendricklamar']
+['future', 'nickiminaj', '50cent']
+['nas', 'rakim', 'deadprez', 'ghostfacekillah', 'common']
+['chancetherapper', 'jcole', 'logic', 'drake']
